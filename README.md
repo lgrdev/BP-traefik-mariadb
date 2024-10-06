@@ -17,6 +17,7 @@ Assurez-vous d'avoir les éléments suivants installés sur votre machine avant 
 
 - Docker
 - Docker Compose
+- [Le projet BP-traefik-v3-ssl-ovh-api](https://github.com/lgrdev/BP-traefik-v3-ssl-ovh-api)
 
 ## Structure du projet
 
