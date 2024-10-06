@@ -1,0 +1,47 @@
+networks:
+  traefik_proxy:
+    external: true
+
+secrets:
+   user_password:
+     file: ./secrets/user_password.secret
+   root_password:
+     file: ./secrets/root_password.secret
+
+services:
+  mariadbssl:
+    image: mariadb:${MARIADB_VERSION}
+    restart: always
+    container_name: mariadb
+    expose:
+      - "3306"
+    secrets:
+      - user_password
+      - root_password      
+    environment:
+      - MARIADB_ROOT_HOST=localhost
+      - MARIADB_ROOT_PASSWORD_FILE=/run/secrets/root_password
+      - MARIADB_DATABASE=${DB_DATABASE}
+      - MARIADB_USER=${DB_USER}
+      - MARIADB_PASSWORD_FILE=/run/secrets/user_password
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD="no"
+      - 'TZ=Europe/Paris'
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      interval: 2m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - traefik_proxy
+    labels:
+      - traefik.enable=true
+      - traefik.tcp.routers.mariadb.rule=HostSNI(`*`)
+      - traefik.tcp.routers.mariadb.entrypoints=db-mariadb
+# comment the following line to disable the whitelist middleware      
+      - traefik.tcp.routers.mariadb.middlewares=tcpSecureByIp@file
+      - traefik.tcp.routers.mariadb.service=mariadb-svc
+      - traefik.tcp.services.mariadb-svc.loadbalancer.server.port=3306
+    volumes:
+      - ./mariadb/data:/var/lib/mysql
+      - ./mariadb/conf:/etc/mysql/conf.d
