@@ -10,7 +10,7 @@ secrets:
 
 services:
   mariadbssl:
-    image: mariadb:${MARIADB_VERSION}
+    image: mariadb:${DB_VERSION}
     restart: always
     container_name: mariadb
     expose:

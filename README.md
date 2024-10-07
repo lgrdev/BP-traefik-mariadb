@@ -63,7 +63,7 @@ Pour des raisons de sécurité, veillez à saisir 2 mots de passe différents av
 Modifiez le fichier `.env` à la racine du projet avec les variables nécessaires :
 
 ```env
-MARIADB_VERSION=10.6
+DB_VERSION=10.6
 DB_DATABASE=my_database
 DB_USER=my_user
 ```
